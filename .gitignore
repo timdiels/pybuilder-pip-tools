@@ -1,0 +1,17 @@
+.coverage
+.settings
+.tmontmp
+.testmondata
+*.orig
+.pydevproject
+.project
+*.pyc
+*.egg-info
+*.swp
+.cproject
+.cache
+__pycache__
+venv
+last_test_runs
+target
+src/doc/sphinx/_build
