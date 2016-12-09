@@ -1,5 +1,5 @@
-.. image:: https://readthedocs.org/projects/pybuilder-pip-tools/badge/?version=1.0.1
-   :target: http://pybuilder-pip-tools.readthedocs.io/en/1.0.1/?badge=1.0.1
+.. image:: https://readthedocs.org/projects/pybuilder-pip-tools/badge/?version=latest
+   :target: http://pybuilder-pip-tools.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
 PyBuilder Pip Tools is a PyBuilder plugin which generates
@@ -12,7 +12,7 @@ your virtual env in sync with them. This is achieved with `pip-compile` and
 Links
 =====
 
-- `Documentation <http://pybuilder-pip-tools.readthedocs.io/en/1.0.1/>`_
+- `Documentation <http://pybuilder-pip-tools.readthedocs.io/en/latest/>`_
 - `PyPI <https://pypi.python.org/pypi/pybuilder-pip-tools/>`_
 - `GitHub <https://github.com/timdiels/pybuilder-pip-tools>`_
 

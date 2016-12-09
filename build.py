@@ -19,17 +19,24 @@ authors = [
     Author('Tim Diels', 'timdiels.m@gmail.com'),
 ]
             
-# plugin imports
-import re
-import os
-import shutil
-
 use_plugin('python.core')
 use_plugin('python.install_dependencies')
 use_plugin('python.distutils')
 use_plugin('copy_resources')
 use_plugin('filter_resources')
 use_plugin('source_distribution')
+
+################################
+# pybuilder_chicken_turtle
+#
+# PyBuilder plugin which enforces a workflow for Python project using pull requests and build servers
+'''
+Assumes python.distutils is used
+'''
+import re
+import os
+import sys
+import shutil
 
 from pybuilder.plugins.filter_resources_plugin import ProjectDictWrapper
 
@@ -38,6 +45,8 @@ readme_file = 'src/project/README.rst'
 @init()
 def main_init(project, logger): #TODO rm prefix
     project.plugin_depends_on('string')
+    project.plugin_depends_on('GitPython')
+    project.plugin_depends_on('Versio')
     
     #TODO validate here or later step?
     # Validate project name: pybuilder_validate_name, _mode=strict|lenient. No off, that's what #use_plugin is for
@@ -74,6 +83,9 @@ def main_init(project, logger): #TODO rm prefix
     # project.author
     project.author = ', '.join(author.name for author in project.authors)
     
+    # Python index
+    project.set_property('distutils_upload_repository', 'pypitest') #TODO name it testpypi instead
+    
 @task('prepare')
 def main_prepare(project, logger): #TODO rm prefix
     import string
@@ -100,6 +112,85 @@ def main_prepare(project, logger): #TODO rm prefix
     with open('README.rst', 'w') as f:
         f.write(contents)
     project.description = contents
+
+@before('upload')
+def release_pre_upload(project, logger):  #TODO rm prefix
+    repo = _get_repo()
+    
+    # If current commit has no tag, fail
+    commit = repo.commit()
+    for tag in repo.tags:
+        if tag.commit == commit:
+            break
+    else:
+        raise BuildFailedException(
+            'Current commit has no tag. '
+            'To publish, it should have a tag named "{version}".'
+        )
+    
+    # If tag is not a version tag or is different from project.version, fail
+    try:
+        if project.version != _version_from_tag(tag):
+            raise BuildFailedException(
+                'Version tag ({}) of current commit does not equal project.version ({}).'
+                .format(tag.name, project.version)
+            )
+    except ValueError:
+        raise BuildFailedException(
+            'Current commit has tag ({}). '
+            'To release, it should have a tag named "{version}".'
+            .format(tag.name)
+        )
+        
+    # If version < newest ancestor version, warn
+    ancestors = list(repo.commit().iter_parents())
+    versions = []
+    for tag in repo.tags:
+        if tag.commit in ancestors:
+            try:
+                versions.append(_version_from_tag(tag))
+            except ValueError:
+                pass
+    newest_ancestor_version = max(versions, default=Version('0.0.0'))
+             
+    if project.version < newest_ancestor_version:
+        logger.warn(
+            'project.version ({}) is less than that of an ancestor commit ({})'
+            .format(project.version, newest_ancestor_version)
+        )
+    
+def Version(*args, **kwargs):
+    import versio.version
+    import versio.version_scheme
+    return versio.version.Version(*args, scheme=versio.version_scheme.Pep440VersionScheme, **kwargs)
+
+def _get_repo():
+    import git
+    return git.Repo('.git')
+
+def _version_from_tag(tag):
+    '''
+    Get version from version tag
+     
+    Returns
+    -------
+    str
+        The version the version tag represents 
+     
+    Raises
+    ------
+    ValueError
+        If tag name is not of format v{version}, i.e. not a version tag
+    '''
+    name = tag.name.split(os.sep)[-1]
+    if name.startswith('v'):
+        version = name[1:]
+    else:
+        version = name
+    #TODO what if it's not a version tag? We should check. Does Version raise when it's not valid?
+    #raise ValueError('{} is not a version tag'.format(tag))
+    #TODO probably just return an actual Version instance instead of str
+    return version
 
 ################################
 # pybuilder_pytest
