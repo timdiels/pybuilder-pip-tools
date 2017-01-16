@@ -216,11 +216,13 @@ import os
 def pytest_init(project):  #TODO rm prefix
     project.plugin_depends_on('plumbum')
     project.plugin_depends_on('pytest')
+    project.plugin_depends_on('future')
     project.set_property_if_unset('dir_source_unittest_python', 'src/unittest/python')
     
 @task('run_unit_tests')
 def pytest_run_unit_tests(project, logger):  #TODO rm prefix
     import plumbum as pb
+    from future.utils import raise_from
     
     # PYTHONPATH
     path_parts = []
@@ -236,7 +238,7 @@ def pytest_run_unit_tests(project, logger):  #TODO rm prefix
         try:
             pb.local['py.test']['--maxfail', '1', '-v', '--lf', dir_source_unittest_python] & pb.FG #TODO rm --maxfail 1 -v --lf when final, add a property instead: pybuilder_pytest_args
         except pb.ProcessExecutionError as ex:
-            raise BuildFailedException('py.test failed') from ex
+            raise_from(BuildFailedException('py.test failed'), ex)
 
 
 ################################
