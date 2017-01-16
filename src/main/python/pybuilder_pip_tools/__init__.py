@@ -24,12 +24,10 @@ from glob import glob
 import re
 import os
 import sys
-from urllib.parse import urlparse, parse_qs  # TODO simply import from elsewhere in Python2
+from urllib.parse import urlparse, parse_qs
 
 # Assumptions
 # - when referring to extras, a user does so in `name`, e.g. depends_on('pkg[opt1,opt2]')
-
-#TODO use and depend on pathlib when python<3.4 https://pypi.python.org/pypi/pathlib/
 
 @init()
 def init(project):
