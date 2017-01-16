@@ -47,6 +47,7 @@ def main_init(project, logger): #TODO rm prefix
     project.plugin_depends_on('string')
     project.plugin_depends_on('GitPython')
     project.plugin_depends_on('Versio')
+    project.plugin_depends_on('twine')
     
     #TODO validate here or later step?
     # Validate project name: pybuilder_validate_name, _mode=strict|lenient. No off, that's what #use_plugin is for
@@ -83,9 +84,6 @@ def main_init(project, logger): #TODO rm prefix
     # project.author
     project.author = ', '.join(author.name for author in project.authors)
     
-    # Python index
-    project.set_property('distutils_upload_repository', 'pypitest') #TODO name it testpypi instead
-    
 @task('prepare')
 def main_prepare(project, logger): #TODO rm prefix
     import string
@@ -113,8 +111,9 @@ def main_prepare(project, logger): #TODO rm prefix
         f.write(contents)
     project.description = contents
 
-@before('upload')
-def release_pre_upload(project, logger):  #TODO rm prefix
+@task(description='Upload distutils packages with twine')
+@depends('publish')
+def upload_twine(project, logger):
     repo = _get_repo()
     
     # If current commit has no tag, fail
@@ -158,6 +157,9 @@ def release_pre_upload(project, logger):  #TODO rm prefix
             'project.version ({}) is less than that of an ancestor commit ({})'
             .format(project.version, newest_ancestor_version)
         )
+        
+    # Upload
+    pb.local['twine']('--repository', project.get_property('distutils_upload_repository'))
     
 def Version(*args, **kwargs):
     import versio.version

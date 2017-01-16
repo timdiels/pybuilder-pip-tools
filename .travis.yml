@@ -1,0 +1,26 @@
+# Travis kills the build if a job takes longer than 50 min or if a job produces
+# no output for 10 min
+# See https://docs.travis-ci.com/user/customizing-the-build/#Build-Timeouts
+
+language: python
+sudo: false  # only set to required if you need it
+dist: trusty  # from 2014, the newest we can get at the moment; comes with pretty ancient software, still
+python:
+    # for available python environments versions, see
+    # https://docs.travis-ci.com/user/languages/python/#Choosing-Python-versions-to-test-against
+    - 3.4
+    - 3.5
+before_install:
+    # if any step fails, build aborts immediately
+install:
+    # if any step fails, build aborts immediately
+    - pip2 install -U setuptools pip wheel
+    - pip3 install -U setuptools pip wheel
+    - pip2 install -U mercurial  # old mercurial or python2 < 2.7.10 leads to SSL verification failures
+    - pip install pip-tools>1.7
+    - pip-sync requirements.txt build_requirements.txt
+script:
+    # if any step fails, stubbornly continues with next steps before failing
+    - pyb verify
+after-success:
+    - travis/after_success.sh
