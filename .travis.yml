@@ -21,4 +21,4 @@ script:
     # if any step fails, stubbornly continues with next steps before failing
     - pyb verify
 after_success:
-    - travis/after_success.sh
+    - travis_files/after_success.sh
