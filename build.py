@@ -48,6 +48,13 @@ def main_init(project, logger): #TODO rm prefix
     project.plugin_depends_on('GitPython')
     project.plugin_depends_on('Versio')
     project.plugin_depends_on('twine')
+    project.plugin_depends_on('plumbum')
+    
+    # Sphinx doc
+    project.plugin_depends_on('sphinx')
+    project.plugin_depends_on('numpydoc')
+    project.plugin_depends_on('sphinx-rtd-theme')
+    project.set_property_if_unset('dir_source_doc', 'src/doc')
     
     #TODO validate here or later step?
     # Validate project name: pybuilder_validate_name, _mode=strict|lenient. No off, that's what #use_plugin is for
@@ -194,6 +201,13 @@ def _version_from_tag(tag):
     #TODO probably just return an actual Version instance instead of str
     return version
 
+@task
+@depends('prepare')
+def generate_documentation(project):
+    import plumbum as pb
+    cpus_available = len(os.sched_getaffinity(0))  # number of cpus
+    pb.local['sphinx-build']['-j', cpus_available, '-b', 'html', project.expand_path('$dir_source_doc'), project.expand_path('$dir_target/doc')] & pb.FG
+
 ################################
 # pybuilder_pytest
 #
@@ -261,11 +275,6 @@ def build_dependencies(project):
     # pybuilder test lib (TODO)
     project.build_depends_on('plumbum')
     project.build_depends_on('vex')
-    
-    # Sphinx doc (if ever a doc_depends_on or optional deps are added, use that instead as these aren't needed by build.py itself)
-    project.build_depends_on('sphinx')
-    project.build_depends_on('numpydoc')
-    project.build_depends_on('sphinx-rtd-theme')
     
 @init()
 def initialize(project):
