@@ -50,6 +50,17 @@ def main_init(project, logger): #TODO rm prefix
     project.plugin_depends_on('twine')
     project.plugin_depends_on('plumbum')
     
+    # Set is_release
+    repo = _get_repo()
+    try:
+        is_release = repo.active_branch.name == 'release'
+    except TypeError:
+        # GitPython's repo raises TypeError when detached head. During release,
+        # even when git commit --amend, we do not have a detached head; so we
+        # can safely conclude we are not releasing
+        is_release = False
+    project.set_property('is_release', is_release)
+    
     # Sphinx doc
     project.plugin_depends_on('sphinx')
     project.plugin_depends_on('numpydoc')
@@ -112,7 +123,7 @@ def main_prepare(project, logger): #TODO rm prefix
     with open(readme_file) as f:
         contents = f.read()
     contents = string.Template(contents).safe_substitute({
-        'version': project.version if 'RELEASE' in os.environ else 'latest'
+        'version': project.version if project.get_property('is_release') else 'latest'
     })
     with open('README.rst', 'w') as f:
         f.write(contents)
