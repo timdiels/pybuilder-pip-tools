@@ -1,4 +1,4 @@
-from pybuilder.core import use_plugin, init, Author, task, before, depends
+from pybuilder.core import use_plugin, init, Author, task, before, depends, after
 from pybuilder.errors import BuildFailedException
 
 @task
@@ -56,6 +56,13 @@ def main_init(project, logger): #TODO rm prefix
     project.plugin_depends_on('sphinx-rtd-theme')
     project.set_property_if_unset('dir_source_doc', 'src/doc')
     
+    # Set is_release
+    tag = os.environ.get('TRAVIS_TAG')
+    if project.has_property('is_release'):
+        project.set_property('is_release', project.get_property('is_release').lower() in ('true', 'yes'))
+    else:
+        project.set_property('is_release', bool(tag))
+    
     #TODO validate here or later step?
     # Validate project name: pybuilder_validate_name, _mode=strict|lenient. No off, that's what #use_plugin is for
     if re.search('\s', project.name):
@@ -112,7 +119,7 @@ def main_compile_sources(project, logger): #TODO rm prefix
     with open(readme_file) as f:
         contents = f.read()
     contents = string.Template(contents).safe_substitute({
-        'version': project.version if 'RELEASE' in os.environ else 'latest'
+        'version': project.version if project.get_property('is_release') else 'latest'
     })
     with open('README.rst', 'w') as f:
         f.write(contents)
