@@ -8,6 +8,7 @@ Contents:
 
    user_documentation
    developer_documentation
+   changelog
 
 
 Indices and tables
