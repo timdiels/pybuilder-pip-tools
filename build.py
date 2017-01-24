@@ -302,3 +302,6 @@ def initialize(project):
         'Programming Language :: Python :: 3.5',
         'Topic :: Software Development :: Build Tools',
     ])
+    
+    # Release
+    project.set_property('distutils_upload_repository', 'https://pypi.python.org/pypi')
