@@ -20,5 +20,6 @@ install:
 script:
     # if any step fails, stubbornly continues with next steps before failing
     - pyb verify
-after-success:
+after_success:
+    - echo HI
     - travis/after_success.sh
