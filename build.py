@@ -10,7 +10,7 @@ def tmp_stuff(project):
 default_task = ['clean', 'package']
 
 name = 'pybuilder-pip-tools'
-version = '1.0.2.dev'
+version = '1.0.2'
 summary = 'PyBuilder plugin to generate and install requirements.txt files from project (build) dependencies'
 url = 'https://github.com/timdiels/pybuilder-pip-tools'  # Project home page
 license = 'LGPLv3'
@@ -60,6 +60,11 @@ def main_init(project, logger): #TODO rm prefix
         # can safely conclude we are not releasing
         is_release = False
     project.set_property('is_release', is_release)
+    
+    # Project version: add .dev if not release. Using the root setup.py will add
+    # a datetime as well, iff dev.
+    if not is_release:
+        project.version += '.dev'
     
     # Sphinx doc
     project.plugin_depends_on('sphinx')
