@@ -10,8 +10,6 @@ python:
     # https://docs.travis-ci.com/user/languages/python/#Choosing-Python-versions-to-test-against
     - 3.4
     - 3.5
-before_install:
-    # if any step fails, build aborts immediately
 install:
     # if any step fails, build aborts immediately
     - pip2 install -U setuptools pip wheel
