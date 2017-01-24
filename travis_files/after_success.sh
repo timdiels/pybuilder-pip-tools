@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -x
 
 # Only run if all jobs succeeded and we are designated to run the after_success
 # (i.e. we ensure it's run only once)
