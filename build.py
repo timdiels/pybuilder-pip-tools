@@ -37,6 +37,7 @@ import re
 import os
 import sys
 import shutil
+from glob import glob
 
 from pybuilder.plugins.filter_resources_plugin import ProjectDictWrapper
 
@@ -103,6 +104,9 @@ def main_init(project, logger): #TODO rm prefix
     # project.author
     project.author = ', '.join(author.name for author in project.authors)
     
+    # Twine upload config
+    project.set_property('distutils_upload_repository', 'https://pypi.python.org/pypi')
+    
 @task('compile_sources')
 def main_compile_sources(project, logger): #TODO rm prefix
     import string
@@ -133,6 +137,8 @@ def main_compile_sources(project, logger): #TODO rm prefix
 @task(description='Upload distutils packages with twine')
 @depends('publish')
 def upload_twine(project, logger):
+    import plumbum as pb
+    
     repo = _get_repo()
     
     # If current commit has no tag, fail
@@ -178,7 +184,10 @@ def upload_twine(project, logger):
         )
         
     # Upload
-    pb.local['twine']('--repository', project.get_property('distutils_upload_repository'))
+    logger.info('Uploading to PyPI')
+    distributions = tuple(glob(project.expand_path('$dir_dist/dist/*')))
+    repository = project.get_property('distutils_upload_repository')
+    pb.local['twine'].__getitem__(('upload', '--repository', repository, '--repository-url', repository) + distributions) & pb.FG
     
 def Version(*args, **kwargs):
     import versio.version
@@ -314,6 +323,3 @@ def initialize(project):
         'Programming Language :: Python :: 3.5',
         'Topic :: Software Development :: Build Tools',
     ])
-    
-    # Release
-    project.set_property('distutils_upload_repository', 'https://pypi.python.org/pypi')
