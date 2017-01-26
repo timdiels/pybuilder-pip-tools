@@ -2,6 +2,10 @@
    :target: http://pybuilder-pip-tools.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
+.. image:: https://travis-ci.org/timdiels/pybuilder-pip-tools.svg?branch=master
+   :target: https://travis-ci.org/timdiels/pybuilder-pip-tools
+   :alt: Build Status of master
+
 PyBuilder Pip Tools is a PyBuilder plugin which generates
 ``*requirements*.txt`` files from your project (build) dependencies and keeps
 your virtual env in sync with them. This is achieved with `pip-compile` and
