@@ -50,22 +50,6 @@ def main_init(project, logger): #TODO rm prefix
     project.plugin_depends_on('twine')
     project.plugin_depends_on('plumbum')
     
-    # Set is_release
-    repo = _get_repo()
-    try:
-        is_release = repo.active_branch.name == 'release'
-    except TypeError:
-        # GitPython's repo raises TypeError when detached head. During release,
-        # even when git commit --amend, we do not have a detached head; so we
-        # can safely conclude we are not releasing
-        is_release = False
-    project.set_property('is_release', is_release)
-    
-    # Project version: add .dev if not release. Using the root setup.py will add
-    # a datetime as well, iff dev.
-    if not is_release:
-        project.version += '.dev'
-    
     # Sphinx doc
     project.plugin_depends_on('sphinx')
     project.plugin_depends_on('numpydoc')
@@ -106,6 +90,25 @@ def main_init(project, logger): #TODO rm prefix
     
     # project.author
     project.author = ', '.join(author.name for author in project.authors)
+    
+@before(['prepare'])
+def main_before_prepare(project):
+    # Set is_release
+    repo = _get_repo()
+    try:
+        is_release = repo.active_branch.name == 'release'
+    except TypeError:
+        # GitPython's repo raises TypeError when detached head. During release,
+        # even when git commit --amend, we do not have a detached head; so we
+        # can safely conclude we are not releasing
+        is_release = False
+    project.set_property('is_release', is_release)
+    
+    # Project version: add .dev if not release. Using the root setup.py will add
+    # a datetime as well, iff dev.
+    if not is_release:
+        project.version += '.dev'
+    
     
 @task('prepare')
 def main_prepare(project, logger): #TODO rm prefix
