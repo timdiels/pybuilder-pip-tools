@@ -19,5 +19,5 @@ if [ ! -z "$TRAVIS_TAG" ]; then
     fi
 
     # Upload to Python index
-    pyb upload_twine --exclude run_unit_tests --exclude run_integration_tests --exclude verify
+    pyb twine_upload --exclude run_unit_tests --exclude run_integration_tests --exclude verify
 fi

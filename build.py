@@ -136,7 +136,7 @@ def main_compile_sources(project, logger): #TODO rm prefix
 
 @task(description='Upload distutils packages with twine')
 @depends('publish')
-def upload_twine(project, logger):
+def twine_upload(project, logger):
     import plumbum as pb
     
     repo = _get_repo()
