@@ -91,8 +91,8 @@ def main_init(project, logger): #TODO rm prefix
     # project.author
     project.author = ', '.join(author.name for author in project.authors)
     
-@task('prepare')
-def main_prepare(project, logger): #TODO rm prefix
+@task('compile_sources')
+def main_compile_sources(project, logger): #TODO rm prefix
     import string
     
     # Overwrite src/doc/conf.py with src/doc/_conf.py
