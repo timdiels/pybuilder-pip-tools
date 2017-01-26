@@ -210,7 +210,7 @@ def _version_from_tag(tag):
     Raises
     ------
     ValueError
-        If tag name is not of format v{version}, i.e. not a version tag
+        If tag name is not of format {version}, i.e. not a version tag
     '''
     name = tag.name.split(os.sep)[-1]
     if name.startswith('v'):
