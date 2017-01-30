@@ -333,6 +333,7 @@ def build_dependencies(project):
     project.build_depends_on('pytest-cov')
     project.build_depends_on('pytest-timeout')
     project.build_depends_on('pytest-mock')
+    project.build_depends_on('pytest-xdist')
     
     # pybuilder test lib (TODO)
     project.build_depends_on('plumbum')
