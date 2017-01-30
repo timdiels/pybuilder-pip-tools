@@ -256,6 +256,7 @@ def pytest_init(project):  #TODO rm prefix
     project.plugin_depends_on('pytest')
     project.plugin_depends_on('future')
     project.set_property_if_unset('dir_source_unittest_python', 'src/unittest/python')
+    project.set_property_if_unset('pybuilder_pytest_args', project.expand_path('$dir_source_unittest_python'))
     
 @task('run_unit_tests')
 def pytest_run_unit_tests(project, logger):  #TODO rm prefix
@@ -274,7 +275,8 @@ def pytest_run_unit_tests(project, logger):  #TODO rm prefix
     # Run
     with pb.local.env(PYTHONPATH=PYTHONPATH):
         try:
-            pb.local['py.test']['--maxfail', '1', '-v', '--lf', dir_source_unittest_python] & pb.FG #TODO rm --maxfail 1 -v --lf when final, add a property instead: pybuilder_pytest_args
+            args = tuple(project.get_property('pybuilder_pytest_args').split())
+            pb.local['py.test'].__getitem__(args) & pb.FG
         except pb.ProcessExecutionError as ex:
             raise_from(BuildFailedException('py.test failed'), ex)
 
