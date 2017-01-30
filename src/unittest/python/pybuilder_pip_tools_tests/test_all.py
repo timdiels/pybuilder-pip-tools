@@ -101,13 +101,14 @@ def assert_text_contains(whole, part):  # From chicken_turtle_util.test.assert_t
     
 ####################################
 
-@pytest.mark.parametrize('depends_on, pybuilder_pip_tools_urls, requirements, requirements_development', (
-    ('depends_on', 'pybuilder_pip_tools_urls', 'requirements.txt', 'requirements_development.txt'),
-    ('build_depends_on', 'pybuilder_pip_tools_build_urls', 'build_requirements.txt', 'build_requirements_development.txt'),
+@pytest.mark.parametrize('depends_on, pybuilder_pip_tools_urls, requirements, requirements_development, depends_on_text', (
+    ('depends_on', 'pybuilder_pip_tools_urls', 'requirements.txt', 'requirements_development.txt', 'depends_on'),
+    ('build_depends_on', 'pybuilder_pip_tools_build_urls', 'build_requirements.txt', 'build_requirements_development.txt', 'build_depends_on or plugin_depends_on'),
+    ('plugin_depends_on', 'pybuilder_pip_tools_build_urls', 'build_requirements.txt', 'build_requirements_development.txt', 'build_depends_on or plugin_depends_on'),
 ))
 class TestAll(object):
         
-    def test_url_scheme_missing(self, depends_on, pybuilder_pip_tools_urls, requirements, requirements_development):
+    def test_url_scheme_missing(self, depends_on, pybuilder_pip_tools_urls, requirements, requirements_development, depends_on_text):
         '''
         When url lacks scheme://, fail build
         '''
@@ -126,7 +127,7 @@ class TestAll(object):
         )
         
     @pytest.mark.parametrize('fragment', [False, True])
-    def test_url_missing_egg_parameter(self, depends_on, pybuilder_pip_tools_urls, requirements, requirements_development, fragment):
+    def test_url_missing_egg_parameter(self, depends_on, pybuilder_pip_tools_urls, requirements, requirements_development, depends_on_text, fragment):
         '''
         When url lacks '#egg=name-version' entirely, fail build
         '''
@@ -147,7 +148,7 @@ class TestAll(object):
             failure_message="Missing '#egg=pkg-name-version' fragment in url {!r}".format(url)
         )
         
-    def test_url_missing_version(self, depends_on, pybuilder_pip_tools_urls, requirements, requirements_development):
+    def test_url_missing_version(self, depends_on, pybuilder_pip_tools_urls, requirements, requirements_development, depends_on_text):
         '''
         When url has egg=name instead of egg=name-version, fail build
         '''
@@ -171,7 +172,7 @@ class TestAll(object):
             )
         )
          
-    def test_url_not_in_dependencies(self, depends_on, pybuilder_pip_tools_urls, requirements, requirements_development):
+    def test_url_not_in_dependencies(self, depends_on, pybuilder_pip_tools_urls, requirements, requirements_development, depends_on_text):
         '''
         When url refers to package not listed in project dependencies, fail build
         '''
@@ -194,7 +195,7 @@ class TestAll(object):
                 "1) forgot to add with {depends_on}, "
                 "2) meant to use the build/runtime counterpart or "
                 "3) forgot to specify version in '#egg={{pkg-name}}-{{version}}' fragment."
-                .format(name=name, depends_on=depends_on)
+                .format(name=name, depends_on=depends_on_text)
             )
         )
         
@@ -217,7 +218,7 @@ class TestAll(object):
         assert '-e ' + url in content
 
     @pytest.mark.parametrize('fragment', ('#egg={}-0', '#egg={}-0&other=meh', '#other=meh&egg={}-0'))
-    def test_valid_fragments(self, depends_on, pybuilder_pip_tools_urls, requirements, requirements_development, fragment):
+    def test_valid_fragments(self, depends_on, pybuilder_pip_tools_urls, requirements, requirements_development, depends_on_text, fragment):
         '''
         When valid fragment, work fine
         '''
@@ -226,7 +227,7 @@ class TestAll(object):
         url += fragment.format(name)
         self.assert_basic(depends_on, pybuilder_pip_tools_urls, requirements_development, name, url)
         
-    def test_dashed_name(self, depends_on, pybuilder_pip_tools_urls, requirements, requirements_development):
+    def test_dashed_name(self, depends_on, pybuilder_pip_tools_urls, requirements, requirements_development, depends_on_text):
         '''
         When package name contains dashes, work fine
         '''
@@ -234,7 +235,7 @@ class TestAll(object):
         url = 'hg+https://hg.logilab.org/review/cubes/celery#egg=cubicweb-celery-0'
         self.assert_basic(depends_on, pybuilder_pip_tools_urls, requirements_development, name, url)
         
-    def test_output_files(self, depends_on, pybuilder_pip_tools_urls, requirements, requirements_development):
+    def test_output_files(self, depends_on, pybuilder_pip_tools_urls, requirements, requirements_development, depends_on_text):
         '''
         When valid url, correct output files
         
@@ -274,6 +275,60 @@ class TestAll(object):
         assert '-e ' + url + version in lines
         assert name + version not in lines
         assert 'fpkg==0.1' in lines
+
+# Reenable if we implement conflict detection
+# class TestPluginBuildConflicts(object):
+#     
+#     '''
+#     When a dependency appears as build and plugin dependency, test whether it
+#     conflicts in the right cases
+#     '''
+#     
+#     def test_no_version(self):
+#         '''
+#         When both having no version, no conflict 
+#         '''
+#         pyb(
+#             init_body='''\
+#                 project.plugin_depends_on('click')
+#                 project.build_depends_on('click')
+#             '''
+#         )
+#         
+#     def test_compatible_version(self):
+#         '''
+#         When compatible versions, no conflict
+#         '''
+#         pyb(
+#             init_body='''\
+#                 project.plugin_depends_on('click', '>6.0')
+#                 project.build_depends_on('click', '>6.4')
+#             '''
+#         )
+#         
+#         
+#     def test_options_ignored(self):
+#         '''
+#         When having different options, not necessarily a conflict 
+#         '''
+#         pyb(
+#             init_body='''\
+#                 project.plugin_depends_on('chicken_turtle_util[click]', '==4.0.1')
+#                 project.build_depends_on('chicken_turtle_util[debug]', '==4.0.1')
+#             '''
+#         )
+#                 
+#     def test_incompatible_version(self):
+#         '''
+#         When incompatible versions, conflict
+#         '''
+#         assert_pyb_fails(
+#             init_body='''\
+#                 project.plugin_depends_on('click', '>6.4')
+#                 project.build_depends_on('click', '<6.4')
+#             ''',
+#             failure_message='TODOTODO8798789789799' #TODO
+#         )
         
 def test_sync():
     '''

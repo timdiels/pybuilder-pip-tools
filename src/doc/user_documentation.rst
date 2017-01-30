@@ -2,13 +2,15 @@ User documentation
 ==================
 
 PyBuilder Pip Tools is a PyBuilder plugin which generates
-``*requirements*.txt`` files from your project (build) dependencies and keeps
-your virtual env in sync with them. This is achieved with `pip-compile` and
-`pip-sync` from `pip-tools`_.
+``*requirements*.txt`` files from your project plugin/build/install
+dependencies and keeps your virtual env in sync with them. This is achieved
+with `pip-compile` and `pip-sync` from `pip-tools`_. No distinction is made
+between plugin and build dependencies; plugin dependencies are treated as build
+dependencies.
 
 The plugin adds the `pip_sync` task and 2 project properties:
 `$pybuilder_pip_tools_urls` and `$pybuilder_pip_tools_build_urls`. 
-The properties allow specifying dependency urls for regular and build
+The properties allow specifying dependency urls for regular and build/plugin
 dependencies respectively::
 
   project.build_depends_on('pybuilder', '>0.9.0')
@@ -31,11 +33,10 @@ The `pip_sync` task first generates these requirements files (with `pip-compile`
     their url in `$pybuilder_pip_tools_urls`, if any.
 `build_requirements.txt`
     Analog to `requirements.txt`, using `project.build_dependencies`
-    (`project.build_depends_on`)
-    instead.
+    (`project.build_depends_on`) + `project.plugin_dependencies` instead.
 `build_requirements_development.txt`
-    Analog to `requirements.txt`, using `project.build_dependencies`
-    and `$pybuilder_pip_tools_urls` instead.
+    Analog to `requirements.txt`, using `project.build_dependencies`,
+    `project.plugin_dependencies` and `$pybuilder_pip_tools_urls` instead.
 
 For example, for the snippet above this would generate:
 

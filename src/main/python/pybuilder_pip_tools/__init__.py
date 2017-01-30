@@ -42,8 +42,19 @@ def init(project):
 def pip_sync(project):
     import plumbum as pb
     _pip_compile(project.dependencies, project.get_property('pybuilder_pip_tools_urls'), 'requirements', 'depends_on')
-    _pip_compile(project.build_dependencies, project.get_property('pybuilder_pip_tools_build_urls'), 'build_requirements', 'build_depends_on')
+    _pip_compile(_merged_dependencies(project), project.get_property('pybuilder_pip_tools_build_urls'), 'build_requirements', 'build_depends_on or plugin_depends_on')
     pb.local['pip-sync'](*glob('*requirements_development.txt'))
+    
+def _merged_dependencies(project):
+    '''
+    Get plugin and build dependencies, merged together
+    
+    Compatible version constraints are merged through intersection.
+    '''
+    plugin_dependencies = {dependency.name : dependency for dependency in project.plugin_dependencies}
+    build_dependency_names = set(dependency.name for dependency in project.build_dependencies)
+    plugin_dependency_only_names = plugin_dependencies.keys() - build_dependency_names
+    return project.build_dependencies + [plugin_dependencies[name] for name in plugin_dependency_only_names]
     
 def _pip_compile(dependencies, urls, requirements_stem, depends_on):
     import attr
