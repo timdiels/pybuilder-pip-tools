@@ -107,6 +107,17 @@ def main_init(project, logger): #TODO rm prefix
     # Twine upload config
     project.set_property('distutils_upload_repository', 'https://pypi.python.org/pypi')
     
+@before(['prepare'])
+def before_prepare(project):
+    pytest_args = project.get_property('pytest', None)
+    
+    # pytest property 
+    if project.has_property('pytest'):
+        args = pytest_args
+    else:
+        args = project.expand_path('$dir_source_unittest_python')
+    project.set_property('pybuilder_pytest_args', args)
+    
 @task('compile_sources')
 def main_compile_sources(project, logger): #TODO rm prefix
     import string
