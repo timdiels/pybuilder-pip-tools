@@ -10,7 +10,7 @@ def tmp_stuff(project):
 default_task = ['clean', 'package']
 
 name = 'pybuilder-pip-tools'
-version = '1.0.6'
+version = '1.1.0'
 summary = 'PyBuilder plugin to generate and install requirements.txt files from project (build) dependencies'
 url = 'https://github.com/timdiels/pybuilder-pip-tools'  # Project home page
 license = 'LGPLv3'
