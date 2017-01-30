@@ -2,7 +2,7 @@ alabaster==0.7.9
 args==0.1.0
 Babel==2.3.4
 clint==0.5.1
-coverage==4.2
+coverage==4.0.3
 cram==0.7
 docutils==0.13.1
 flake8==3.2.1

@@ -49,7 +49,7 @@ def pyb(init_body):
     )
     with open('build.py', 'w') as f:
         f.write(content)
-    pb.local['vex']('--path', 'venv', '-m', 'pip', 'install', '-U', 'pip', 'setuptools', 'wheel', 'pybuilder')   #TODO does this use `which python` or some other Python version for the venv? It should match
+    pb.local['vex']('--path', 'venv', '-m', 'pip', 'install', '-U', 'pip', 'setuptools', 'wheel', 'pybuilder', 'pytest-cov')   #TODO does this use `which python` or some other Python version for the venv? It should match
     pb.local['vex']('--path', 'venv', 'pyb', '-X', 'pip_sync')
     
 def assert_pyb_fails(init_body, failure_message):

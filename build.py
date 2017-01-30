@@ -109,13 +109,38 @@ def main_init(project, logger): #TODO rm prefix
     
 @before(['prepare'])
 def before_prepare(project):
+    coverage_report = project.get_property('coverage_report', None)
     pytest_args = project.get_property('pytest', None)
     
-    # pytest property 
-    if project.has_property('pytest'):
-        args = pytest_args
+    # Ensure coverage_report and pytest are mutually exclusive
+    if coverage_report and pytest_args:
+        raise BuildFailedException(
+            'Both coverage_report and pytest property are given. They are mutually exclusive. Remove one.'
+        )
+        
+    # coverage_report property
+    if coverage_report:
+        if coverage_report == 'travis':
+            args = (
+                '--cov {source_main} --cov-report term-missing {source_unittest}'
+                .format(
+                    source_main=project.expand_path('$dir_source_main_python'),
+                    source_unittest=project.expand_path('$dir_source_unittest_python')
+                )
+            )
+        else:
+            raise BuildFailedException(
+                'Invalid value for coverage_report: {}. '
+                'Expected "travis".'
+                .format(coverage_report)
+            )
     else:
-        args = project.expand_path('$dir_source_unittest_python')
+        # pytest property 
+        if project.has_property('pytest'):
+            args = pytest_args
+        else:
+            args = project.expand_path('$dir_source_unittest_python')
+    
     project.set_property('pybuilder_pytest_args', args)
     
 @task('compile_sources')
@@ -303,7 +328,9 @@ def build_dependencies(project):
 #     ])
     
     # Testing
+    project.build_depends_on('python-coveralls')
     project.build_depends_on('pytest-env')
+    project.build_depends_on('pytest-cov')
     project.build_depends_on('pytest-timeout')
     project.build_depends_on('pytest-mock')
     

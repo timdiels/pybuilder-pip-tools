@@ -19,6 +19,7 @@ install:
     - pip-sync requirements.txt build_requirements.txt
 script:
     # if any step fails, stubbornly continues with next steps before failing
-    - pyb verify
+    - pyb verify -P 'coverage_report=travis'
 after_success:
+    - coveralls
     - travis_files/after_success.sh
