@@ -275,60 +275,6 @@ class TestAll(object):
         assert '-e ' + url + version in lines
         assert name + version not in lines
         assert 'fpkg==0.1' in lines
-
-# Reenable if we implement conflict detection
-# class TestPluginBuildConflicts(object):
-#     
-#     '''
-#     When a dependency appears as build and plugin dependency, test whether it
-#     conflicts in the right cases
-#     '''
-#     
-#     def test_no_version(self):
-#         '''
-#         When both having no version, no conflict 
-#         '''
-#         pyb(
-#             init_body='''\
-#                 project.plugin_depends_on('click')
-#                 project.build_depends_on('click')
-#             '''
-#         )
-#         
-#     def test_compatible_version(self):
-#         '''
-#         When compatible versions, no conflict
-#         '''
-#         pyb(
-#             init_body='''\
-#                 project.plugin_depends_on('click', '>6.0')
-#                 project.build_depends_on('click', '>6.4')
-#             '''
-#         )
-#         
-#         
-#     def test_options_ignored(self):
-#         '''
-#         When having different options, not necessarily a conflict 
-#         '''
-#         pyb(
-#             init_body='''\
-#                 project.plugin_depends_on('chicken_turtle_util[click]', '==4.0.1')
-#                 project.build_depends_on('chicken_turtle_util[debug]', '==4.0.1')
-#             '''
-#         )
-#                 
-#     def test_incompatible_version(self):
-#         '''
-#         When incompatible versions, conflict
-#         '''
-#         assert_pyb_fails(
-#             init_body='''\
-#                 project.plugin_depends_on('click', '>6.4')
-#                 project.build_depends_on('click', '<6.4')
-#             ''',
-#             failure_message='TODOTODO8798789789799' #TODO
-#         )
         
 def test_sync():
     '''
