@@ -73,7 +73,7 @@ def _pip_compile(dependencies, urls, requirements_stem, depends_on):
             )
     
     # Merge urls and dependencies
-    Dependency = attr.make_class('Dependency', ('name', 'options', 'version', 'url'))
+    Dependency = attr.make_class('Dependency', ('name', 'options', 'version', 'url'))  # TODO consider instead using https://packaging.pypa.io/en/latest/ or http://setuptools.readthedocs.io/en/latest/pkg_resources.html#requirement-methods-and-attributes
     def split_dependency(dependency):
         match = re.fullmatch(r'([^[]*)(\[.*\])?', dependency.name)
         if not match:
