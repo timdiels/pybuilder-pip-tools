@@ -32,6 +32,6 @@ changed frequently.  When doing so, the `major version <semver_>`_ is bumped
 and a changelog is kept to help upgrade. Fixes will not be backported. It is
 recommended to pin the major version in your build.py, e.g. for 1.x.y::
 
-    use_plugin('pypi:pybuilder_pip_tools', '1.*')
+    use_plugin('pypi:pybuilder_pip_tools', '==1.*')
 
 .. _semver: http://semver.org/spec/v2.0.0.html
