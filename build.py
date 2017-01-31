@@ -336,8 +336,14 @@ def build_dependencies(project):
     project.build_depends_on('pytest-xdist')
     
     # pybuilder test lib (TODO)
-    project.build_depends_on('plumbum')
+    #project.build_depends_on('plumbum')
     project.build_depends_on('vex')
+    
+@init()
+def dependencies(project):
+    project.depends_on('pip-tools', '~=1.7')
+    project.depends_on('plumbum')
+    project.depends_on('attrs')
     
 @init()
 def initialize(project):

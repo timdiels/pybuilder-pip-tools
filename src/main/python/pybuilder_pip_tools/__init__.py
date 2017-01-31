@@ -31,9 +31,6 @@ from urllib.parse import urlparse, parse_qs
 
 @init()
 def init(project):
-    project.plugin_depends_on('pip-tools', '>=1.7.0')
-    project.plugin_depends_on('plumbum')
-    project.plugin_depends_on('attrs')
     project.set_property_if_unset('pybuilder_pip_tools_urls', [])  
     project.set_property_if_unset('pybuilder_pip_tools_build_urls', [])
 
