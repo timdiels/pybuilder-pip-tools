@@ -3,6 +3,10 @@ Changelog
 
 `Semantic versioning <semver_>`_ is used.
 
+1.1.1
+-----
+- Fix: add missing dependencies
+
 1.1.0
 -----
 - Enhancement: include plugin dependencies in ``build_requirements*.txt`` files.
