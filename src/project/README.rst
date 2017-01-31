@@ -1,6 +1,6 @@
 .. image:: https://readthedocs.org/projects/pybuilder-pip-tools/badge/?version=$latest_or_version
    :target: http://pybuilder-pip-tools.readthedocs.io/en/$latest_or_version/?badge=$latest_or_version
-   :alt: Documentation Status
+   :alt: Documentation Status of $latest_or_version
 
 .. image:: https://travis-ci.org/timdiels/pybuilder-pip-tools.svg?branch=$master_or_version
    :target: https://travis-ci.org/timdiels/pybuilder-pip-tools
