@@ -6,10 +6,9 @@
    :target: https://travis-ci.org/timdiels/pybuilder-pip-tools
    :alt: Build Status of master
 
-.. image:: https://coveralls.io/repos/github/timdiels/pybuilder-pip-tools/badge.svg
-   :target: https://coveralls.io/github/timdiels/pybuilder-pip-tools
-   :alt: Test coverage of latest build
-
+.. image:: https://coveralls.io/repos/github/timdiels/pybuilder-pip-tools/badge.svg?branch=master
+   :target: https://coveralls.io/github/timdiels/pybuilder-pip-tools?branch=master
+   :alt: Test coverage of master
 
 PyBuilder Pip Tools is a PyBuilder plugin which generates
 ``*requirements*.txt`` files from your project (build) dependencies and keeps
