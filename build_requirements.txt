@@ -15,7 +15,7 @@ future==0.16.0
 gitdb2==2.0.0
 GitPython==2.1.1
 imagesize==0.7.1
-Jinja2==2.9.4
+Jinja2==2.11.3
 Mako==1.0.6
 Markdown==2.4.1
 MarkupSafe==0.23
