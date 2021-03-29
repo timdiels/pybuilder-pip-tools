@@ -22,7 +22,7 @@ pybuilder==0.11.9
 pycodestyle==2.2.0
 pyfix==0.2.3
 pyflakes==1.3.0
-Pygments==2.2.0
+Pygments==2.7.4
 pypandoc==1.3.3
 pytddmon==1.0.8
 pytest==3.0.6
